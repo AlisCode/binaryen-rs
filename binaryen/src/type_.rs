@@ -1,6 +1,7 @@
 pub use binaryen_sys::bindings::BinaryenType;
 use binaryen_sys::bindings::{BinaryenTypeCreate, BinaryenTypeInt32, BinaryenTypeNone};
 
+#[derive(Clone, Copy)]
 pub struct Type(BinaryenType);
 
 impl Type {

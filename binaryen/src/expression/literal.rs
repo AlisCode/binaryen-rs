@@ -1,7 +1,10 @@
 use binaryen_sys::bindings::{
-    BinaryenLiteral, BinaryenLiteralFloat32, BinaryenLiteralFloat32Bits, BinaryenLiteralFloat64,
-    BinaryenLiteralFloat64Bits, BinaryenLiteralInt32, BinaryenLiteralInt64, BinaryenLiteralVec128,
+    BinaryenConst, BinaryenLiteral, BinaryenLiteralFloat32, BinaryenLiteralFloat32Bits,
+    BinaryenLiteralFloat64, BinaryenLiteralFloat64Bits, BinaryenLiteralInt32, BinaryenLiteralInt64,
+    BinaryenLiteralVec128,
 };
+
+use crate::expression::{builder::ExpressionBuilder, Expression};
 
 pub struct Literal(BinaryenLiteral);
 
@@ -36,5 +39,15 @@ impl Literal {
 
     pub(crate) fn into_inner(self) -> BinaryenLiteral {
         self.0
+    }
+}
+
+impl<'a> ExpressionBuilder<'a> {
+    pub fn const_(&self, literal: Literal) -> Expression {
+        let module = self.module.as_inner();
+        let value = literal.into_inner();
+
+        let expr_ref = unsafe { BinaryenConst(module, value) };
+        Expression::from_inner(expr_ref)
     }
 }

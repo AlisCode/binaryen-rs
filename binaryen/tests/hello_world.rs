@@ -2,7 +2,7 @@
 // https://github.com/WebAssembly/binaryen/blob/899e44e2c3dd40795c843a91cfc326e11d64cab0/test/example/c-api-hello-world.c
 
 use binaryen::{
-    expression::{Expression, Operation},
+    expression::operation::Operation,
     function::Function,
     module::Module,
     type_::{Type, Types},
@@ -19,9 +19,10 @@ fn c_api_hello_world() {
     let results = Type::i32();
 
     // Get the 0 and 1 arguments, and add them
-    let x = Expression::local_get(&mut module, 0, Type::i32());
-    let y = Expression::local_get(&mut module, 1, Type::i32());
-    let add = Expression::binary(&mut module, &Operation::i32_add(), &x, &y);
+    let builder = module.expr_builder();
+    let x = builder.local_get(0, Type::i32());
+    let y = builder.local_get(1, Type::i32());
+    let add = builder.binary(Operation::i32_add(), &x, &y);
 
     // Create the add function
     // Note: no additional local variables

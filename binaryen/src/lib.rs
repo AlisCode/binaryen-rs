@@ -6,6 +6,5 @@
 
 pub mod expression;
 pub mod function;
-pub mod literal;
 pub mod module;
 pub mod type_;

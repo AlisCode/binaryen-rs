@@ -1,3 +1,15 @@
+//! Modules contain lists of functions, imports, exports, function types. The
+//! Add* methods create them on a module. The module owns them and will free
+//! their memory when the module is disposed of.
+//!
+//! Expressions are also allocated inside modules, and freed with the module.
+//! They are not created by Add* methods, since they are not added directly on
+//! the module, instead, they are arguments to other expressions (and then they
+//! are the children of that AST node), or to a function (and then they are the
+//! body of that function).
+//!
+//! A module can also contain a function table for indirect calls, a memory,
+//! and a start method.
 use binaryen_sys::bindings::{
     BinaryenModuleCreate, BinaryenModuleDispose, BinaryenModulePrint, BinaryenModuleRef,
     BinaryenSetStart,
@@ -32,6 +44,10 @@ impl Module {
     }
 
     pub(crate) fn as_inner_mut(&mut self) -> BinaryenModuleRef {
+        self.0
+    }
+
+    pub(crate) fn as_inner(&self) -> BinaryenModuleRef {
         self.0
     }
 }
