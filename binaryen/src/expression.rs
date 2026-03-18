@@ -1,8 +1,9 @@
 use binaryen_sys::bindings::{
-    BinaryenAddInt32, BinaryenBinary, BinaryenExpressionRef, BinaryenLocalGet, BinaryenOp,
+    BinaryenAddInt32, BinaryenBinary, BinaryenConst, BinaryenExpressionRef, BinaryenLocalGet,
+    BinaryenOp,
 };
 
-use crate::{module::Module, type_::Type};
+use crate::{literal::Literal, module::Module, type_::Type};
 
 pub struct Expression(BinaryenExpressionRef);
 
@@ -12,6 +13,14 @@ impl Expression {
         let module = module.as_inner_mut();
 
         let expr_ref = unsafe { BinaryenLocalGet(module, idx, ty.into_inner()) };
+        Expression(expr_ref)
+    }
+
+    pub fn const_(module: &mut Module, literal: Literal) -> Self {
+        let module = module.as_inner_mut();
+        let value = literal.into_inner();
+
+        let expr_ref = unsafe { BinaryenConst(module, value) };
         Expression(expr_ref)
     }
 
