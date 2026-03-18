@@ -12,7 +12,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "binaryen-rs"
+name = "binaryen"
+version = "0.1.0"
+dependencies = [
+ "binaryen-sys",
+]
+
+[[package]]
+name = "binaryen-sys"
 version = "0.1.0"
 dependencies = [
  "bindgen",
