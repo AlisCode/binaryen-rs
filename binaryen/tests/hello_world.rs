@@ -3,14 +3,13 @@
 
 use binaryen::{
     expression::operation::Operation,
-    function::Function,
     module::Module,
     type_::{Type, Types},
 };
 
 #[test]
 fn c_api_hello_world() {
-    let mut module = Module::new();
+    let module = Module::new();
 
     // Create a function type for  i32 (i32, i32)
     let ii = vec![Type::i32(), Type::i32()];
@@ -28,7 +27,7 @@ fn c_api_hello_world() {
     // Note: no additional local variables
     // Note: no basic blocks here, we are an AST. The function body is just an
     // expression node.
-    let _adder = Function::add(&mut module, "adder", params, results, &add);
+    let _adder = module.add_function("adder", params, results, vec![], &add);
 
     // Print it out
     module.print();
