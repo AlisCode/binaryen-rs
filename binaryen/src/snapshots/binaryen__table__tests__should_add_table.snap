@@ -1,0 +1,7 @@
+---
+source: binaryen/src/table.rs
+expression: text
+---
+(module
+ (table $table 1 1 funcref)
+)
