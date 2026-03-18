@@ -1,6 +1,7 @@
 use binaryen_sys::bindings::BinaryenExpressionRef;
 
 pub mod builder;
+pub mod call;
 pub mod literal;
 pub mod local;
 pub mod operation;

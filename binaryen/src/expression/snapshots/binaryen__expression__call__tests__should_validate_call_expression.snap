@@ -1,0 +1,16 @@
+---
+source: binaryen/src/expression/call.rs
+expression: text
+---
+(module
+ (type $0 (func (param i32) (result i32)))
+ (type $1 (func (result i32)))
+ (func $callee (param $0 i32) (result i32)
+  (local.get $0)
+ )
+ (func $caller (result i32)
+  (call $callee
+   (i32.const 0)
+  )
+ )
+)
