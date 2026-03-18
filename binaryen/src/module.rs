@@ -10,9 +10,11 @@
 //!
 //! A module can also contain a function table for indirect calls, a memory,
 //! and a start method.
+use std::ffi::CStr;
+
 use binaryen_sys::bindings::{
-    BinaryenModuleCreate, BinaryenModuleDispose, BinaryenModulePrint, BinaryenModuleRef,
-    BinaryenModuleValidate, BinaryenSetStart,
+    BinaryenModuleAllocateAndWriteText, BinaryenModuleCreate, BinaryenModuleDispose,
+    BinaryenModulePrint, BinaryenModuleRef, BinaryenModuleValidate, BinaryenSetStart,
 };
 
 use crate::function::Function;
@@ -35,6 +37,22 @@ impl Module {
         unsafe {
             // Safety: we have exclusive access over the module
             BinaryenModulePrint(self.0);
+        }
+    }
+
+    /// Serialize a module in s-expression form
+    pub fn allocate_and_write_text(&mut self) -> String {
+        // Safety: we have exclusive access over the module,
+        // Binaryen returns a malloc-allocated NUL-terminated buffer,
+        // which we free after copying.
+        //
+        // Copying is fine, we mostly expect this function to be used for testing
+        // purposes.
+        unsafe {
+            let output = BinaryenModuleAllocateAndWriteText(self.0);
+            let text = CStr::from_ptr(output).to_string_lossy().into_owned();
+            libc::free(output.cast());
+            text
         }
     }
 
@@ -75,5 +93,14 @@ pub mod tests {
     fn should_create_module() {
         let module = Module::default();
         drop(module);
+    }
+
+    #[test]
+    fn should_allocate_and_write_text() {
+        let mut module = Module::default();
+
+        let text = module.allocate_and_write_text();
+        // It's an empty module!
+        insta::assert_snapshot!(text);
     }
 }

@@ -1,0 +1,6 @@
+---
+source: binaryen/src/module.rs
+expression: text
+---
+(module
+)

@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 binaryen-sys = { path = "../binaryen-sys" }
+insta = "1.46.3"
+libc = "0.2"
