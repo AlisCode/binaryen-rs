@@ -5,7 +5,7 @@ use binaryen::{expression::operation::Operation, module::Module, type_::Type};
 
 #[test]
 fn c_api_hello_world() {
-    let module = Module::new();
+    let mut module = Module::new();
 
     // Create a function type for  i32 (i32, i32)
     let params = Type::create(vec![Type::i32(), Type::i32()]);
@@ -23,6 +23,6 @@ fn c_api_hello_world() {
     // expression node.
     let _adder = module.add_function("adder", params, results, vec![], &add);
 
-    // Print it out
-    module.print();
+    // Validate the module
+    assert!(module.validate());
 }

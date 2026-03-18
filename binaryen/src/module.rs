@@ -12,7 +12,7 @@
 //! and a start method.
 use binaryen_sys::bindings::{
     BinaryenModuleCreate, BinaryenModuleDispose, BinaryenModulePrint, BinaryenModuleRef,
-    BinaryenSetStart,
+    BinaryenModuleValidate, BinaryenSetStart,
 };
 
 use crate::function::Function;
@@ -31,15 +31,22 @@ impl Module {
         Module(module_ref)
     }
 
-    pub fn print(&self) {
+    pub fn print(&mut self) {
         unsafe {
+            // Safety: we have exclusive access over the module
             BinaryenModulePrint(self.0);
         }
+    }
+
+    pub fn validate(&mut self) -> bool {
+        // Safety: we have exclusive access over the module
+        unsafe { BinaryenModuleValidate(self.0) }
     }
 
     pub fn set_start(&mut self, start: &Function) {
         let module = self.as_inner_mut();
         let start = start.as_inner();
+        // Safety: we have exclusive access over the module
         unsafe { BinaryenSetStart(module, start) }
     }
 
@@ -55,6 +62,7 @@ impl Module {
 impl Drop for Module {
     fn drop(&mut self) {
         let Module(inner) = self;
+        // Safety: we have exclusive access over the module
         unsafe { BinaryenModuleDispose(*inner) }
     }
 }
