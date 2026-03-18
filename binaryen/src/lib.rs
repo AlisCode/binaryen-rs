@@ -4,6 +4,7 @@
 //!
 //! This crate allows the creation, optimization and validation of WASM modules using the Binaryen IR.
 
+pub mod api;
 pub mod expression;
 pub mod function;
 pub mod module;
