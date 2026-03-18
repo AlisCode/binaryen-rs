@@ -1,9 +1,11 @@
-use std::{env, path::Path};
+use std::{env, path::{Path, PathBuf}};
 
 fn main() {
     if !Path::new("binaryen/.git").exists() {
         panic!("binaryen submodule not found. Please run `git submodule update --init` first.");
     }
+
+    println!("cargo:rerun-if-changed=wrapper.h");
 
     let dst = cmake::Config::new("binaryen")
         .define("BUILD_STATIC_LIB", "ON")
@@ -27,8 +29,9 @@ fn main() {
         // Unwrap the Result and panic on failure.
         .expect("Unable to generate bindings");
 
+    let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR is not set"));
     bindings
-        .write_to_file("src/bindings.rs")
+        .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
     // Binaryen is a C++ library, so we need to link against the C++ standard library.

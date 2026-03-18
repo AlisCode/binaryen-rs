@@ -1,4 +1,4 @@
-use binaryen_rs::bindings;
+use binaryen_sys::bindings;
 
 #[test]
 fn test_linking() {
