@@ -1,0 +1,12 @@
+---
+source: binaryen/src/table.rs
+expression: text
+---
+(module
+ (type $0 (func (result i32)))
+ (table $table 1 1 funcref)
+ (elem $elem (i32.const 0) $callee)
+ (func $callee (result i32)
+  (i32.const 0)
+ )
+)
