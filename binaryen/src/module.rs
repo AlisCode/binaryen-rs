@@ -10,9 +10,10 @@
 //!
 //! A module can also contain a function table for indirect calls, a memory,
 //! and a start method.
-use std::ffi::CStr;
+use std::{ffi::CStr, slice};
 
 use binaryen_sys::bindings::{
+    BinaryenModuleAllocateAndWrite, BinaryenModuleAllocateAndWriteResult,
     BinaryenModuleAllocateAndWriteText, BinaryenModuleCreate, BinaryenModuleDispose,
     BinaryenModulePrint, BinaryenModuleRef, BinaryenModuleValidate, BinaryenSetStart,
 };
@@ -53,6 +54,35 @@ impl Module {
             let text = CStr::from_ptr(output).to_string_lossy().into_owned();
             libc::free(output.cast());
             text
+        }
+    }
+
+    /// Serializes a module into binary form, optionally including its source map if
+    /// sourceMapUrl has been specified. Uses the currently set global debugInfo
+    /// option. Differs from BinaryenModuleWrite in that it implicitly allocates
+    /// appropriate buffers using malloc(), and expects the user to free() them
+    /// manually once not needed anymore.
+    ///
+    /// TODO: Make a version that does not copy, if feasible.
+    /// We'd need a safe variant of BinaryenModuleAllocateAndWriteResult, that calls
+    /// libc::free upon dropping.
+    pub fn allocate_and_write(&mut self) -> Vec<u8> {
+        let module = self.as_inner();
+        unsafe {
+            // SAFETY: We have exlcusive access over the module
+            let BinaryenModuleAllocateAndWriteResult {
+                binary,
+                binaryBytes,
+                sourceMap,
+            } = BinaryenModuleAllocateAndWrite(module, std::ptr::null());
+
+            // SAFETY: we can only assume that whatever we got from Binaryen is valid.
+            // Let's copy all those bytes to safe-land!
+            let bytes = slice::from_raw_parts(binary.cast::<u8>(), binaryBytes).to_vec();
+            libc::free(binary);
+            libc::free(sourceMap.cast());
+
+            bytes
         }
     }
 
@@ -102,5 +132,12 @@ pub mod tests {
         let text = module.allocate_and_write_text();
         // It's an empty module!
         insta::assert_snapshot!(text);
+    }
+
+    #[test]
+    fn should_allocate_and_write_binary() {
+        let mut module = Module::default();
+
+        let _bytes = module.allocate_and_write();
     }
 }
