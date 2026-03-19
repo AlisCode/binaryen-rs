@@ -1,0 +1,8 @@
+---
+source: binaryen/src/imports.rs
+expression: text
+---
+(module
+ (type $0 (func))
+ (import "external_module" "f_external" (func $f_internal))
+)

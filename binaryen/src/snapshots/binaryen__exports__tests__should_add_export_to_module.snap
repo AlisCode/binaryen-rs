@@ -1,0 +1,11 @@
+---
+source: binaryen/src/exports.rs
+expression: text
+---
+(module
+ (type $0 (func))
+ (export "f_external" (func $f_internal))
+ (func $f_internal
+  (nop)
+ )
+)
