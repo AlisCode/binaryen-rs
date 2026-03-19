@@ -112,9 +112,10 @@ impl<'a> ExpressionBuilder<'a> {
 
 #[cfg(test)]
 mod tests {
-    use binaryen_sys::bindings::{BinaryenFeatureTailCall, BinaryenModuleSetFeatures};
-
-    use crate::{api::Binaryen, expression::literal::Literal, module::Module, type_::Type};
+    use crate::{
+        api::Binaryen, expression::literal::Literal, features::Features, module::Module,
+        type_::Type,
+    };
 
     #[test]
     fn should_validate_call_expression() {
@@ -169,7 +170,7 @@ mod tests {
     fn should_validate_return_call_expression() {
         Binaryen::set_colors_enabled(false);
         let mut module = Module::new();
-        unsafe { BinaryenModuleSetFeatures(module.as_inner(), BinaryenFeatureTailCall()) };
+        module.set_features(Features::tail_call());
 
         let callee_body = module.expr_builder().local_get(0, Type::i32());
         let _callee = module.add_function("callee", Type::i32(), Type::i32(), vec![], &callee_body);
@@ -191,7 +192,7 @@ mod tests {
     fn should_validate_return_call_indirect_expression() {
         Binaryen::set_colors_enabled(false);
         let mut module = Module::new();
-        unsafe { BinaryenModuleSetFeatures(module.as_inner(), BinaryenFeatureTailCall()) };
+        module.set_features(Features::tail_call());
 
         let callee_body = module.expr_builder().local_get(0, Type::i32());
         let _callee = module.add_function("callee", Type::i32(), Type::i32(), vec![], &callee_body);

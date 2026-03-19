@@ -7,6 +7,7 @@
 pub mod api;
 pub mod exports;
 pub mod expression;
+pub mod features;
 pub mod function;
 pub mod imports;
 pub mod module;
