@@ -7,3 +7,4 @@ edition = "2024"
 binaryen-sys = { path = "../binaryen-sys" }
 insta = "1.46.3"
 libc = "0.2"
+pastey = "0.2.1"
