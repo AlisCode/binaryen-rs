@@ -1,5 +1,6 @@
 use binaryen_sys::bindings::BinaryenExpressionRef;
 
+pub mod block;
 pub mod builder;
 pub mod call;
 pub mod literal;

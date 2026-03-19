@@ -1,0 +1,10 @@
+---
+source: binaryen/src/expression/block.rs
+expression: text
+---
+(module
+ (type $0 (func (result i32)))
+ (func $f (result i32)
+  (i32.const 0)
+ )
+)
