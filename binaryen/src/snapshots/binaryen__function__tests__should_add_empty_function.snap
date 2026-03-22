@@ -1,0 +1,10 @@
+---
+source: binaryen/src/function.rs
+expression: text
+---
+(module
+ (type $0 (func))
+ (func $f
+  (nop)
+ )
+)

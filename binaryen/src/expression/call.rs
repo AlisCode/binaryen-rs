@@ -122,14 +122,20 @@ mod tests {
         let mut module = Module::new();
 
         let callee_body = module.expr_builder().local_get(0, Type::i32());
-        let _callee = module.add_function("callee", Type::i32(), Type::i32(), vec![], &callee_body);
+        let _callee = module.add_function(
+            "callee",
+            Type::i32(),
+            Type::i32(),
+            vec![],
+            Some(&callee_body),
+        );
 
         let body = {
             let builder = module.expr_builder();
             let operand = builder.const_(Literal::i32(0));
             builder.call("callee", vec![operand], Type::i32())
         };
-        let _caller = module.add_function("caller", Type::none(), Type::i32(), vec![], &body);
+        let _caller = module.add_function("caller", Type::none(), Type::i32(), vec![], Some(&body));
 
         assert!(module.validate());
 
@@ -143,7 +149,13 @@ mod tests {
         let mut module = Module::new();
 
         let callee_body = module.expr_builder().local_get(0, Type::i32());
-        let _callee = module.add_function("callee", Type::i32(), Type::i32(), vec![], &callee_body);
+        let _callee = module.add_function(
+            "callee",
+            Type::i32(),
+            Type::i32(),
+            vec![],
+            Some(&callee_body),
+        );
 
         let _table = module.add_table("table", 1, 1, Type::funcref());
 
@@ -157,7 +169,7 @@ mod tests {
             let operand = builder.local_get(0, Type::i32());
             builder.call_indirect("table", &target, vec![operand], Type::i32(), Type::i32())
         };
-        let _caller = module.add_function("caller", Type::i32(), Type::i32(), vec![], &body);
+        let _caller = module.add_function("caller", Type::i32(), Type::i32(), vec![], Some(&body));
 
         assert!(module.validate());
 
@@ -172,14 +184,20 @@ mod tests {
         module.add_feature(Feature::TailCall);
 
         let callee_body = module.expr_builder().local_get(0, Type::i32());
-        let _callee = module.add_function("callee", Type::i32(), Type::i32(), vec![], &callee_body);
+        let _callee = module.add_function(
+            "callee",
+            Type::i32(),
+            Type::i32(),
+            vec![],
+            Some(&callee_body),
+        );
 
         let body = {
             let builder = module.expr_builder();
             let operand = builder.const_(Literal::i32(0));
             builder.return_call("callee", vec![operand], Type::i32())
         };
-        let _caller = module.add_function("caller", Type::none(), Type::i32(), vec![], &body);
+        let _caller = module.add_function("caller", Type::none(), Type::i32(), vec![], Some(&body));
 
         assert!(module.validate());
 
@@ -194,7 +212,13 @@ mod tests {
         module.add_feature(Feature::TailCall);
 
         let callee_body = module.expr_builder().local_get(0, Type::i32());
-        let _callee = module.add_function("callee", Type::i32(), Type::i32(), vec![], &callee_body);
+        let _callee = module.add_function(
+            "callee",
+            Type::i32(),
+            Type::i32(),
+            vec![],
+            Some(&callee_body),
+        );
 
         let _table = module.add_table("table", 1, 1, Type::funcref());
 
@@ -208,7 +232,7 @@ mod tests {
             let operand = builder.local_get(0, Type::i32());
             builder.return_call_indirect("table", &target, vec![operand], Type::i32(), Type::i32())
         };
-        let _caller = module.add_function("caller", Type::i32(), Type::i32(), vec![], &body);
+        let _caller = module.add_function("caller", Type::i32(), Type::i32(), vec![], Some(&body));
 
         assert!(module.validate());
 

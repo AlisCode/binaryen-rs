@@ -77,8 +77,13 @@ mod tests {
         let _table = module.add_table("table", 1, 1, Type::funcref());
 
         let callee_body = module.expr_builder().const_(Literal::i32(0));
-        let _callee =
-            module.add_function("callee", Type::none(), Type::i32(), vec![], &callee_body);
+        let _callee = module.add_function(
+            "callee",
+            Type::none(),
+            Type::i32(),
+            vec![],
+            Some(&callee_body),
+        );
 
         let offset = module.expr_builder().const_(Literal::i32(0));
         module.add_active_element_segment("table", "elem", vec!["callee"], &offset);

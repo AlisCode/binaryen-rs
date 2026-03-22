@@ -21,7 +21,7 @@ fn c_api_hello_world() {
     // Note: no additional local variables
     // Note: no basic blocks here, we are an AST. The function body is just an
     // expression node.
-    let _adder = module.add_function("adder", params, results, vec![], &add);
+    let _adder = module.add_function("adder", params, results, vec![], Some(&add));
 
     // Validate the module
     assert!(module.validate());

@@ -56,7 +56,7 @@ pub mod tests {
         let children = vec![module.expr_builder().const_(Literal::i32(0))];
         let block = module.expr_builder().block(None, children, Type::i32());
 
-        module.add_function("f", Type::none(), Type::i32(), vec![], &block);
+        module.add_function("f", Type::none(), Type::i32(), vec![], Some(&block));
 
         assert!(module.validate());
 

@@ -39,7 +39,13 @@ pub mod tests {
         let mut module = Module::new();
 
         let body = module.expr_builder().nop();
-        module.add_function("f_internal", Type::none(), Type::none(), Vec::new(), &body);
+        module.add_function(
+            "f_internal",
+            Type::none(),
+            Type::none(),
+            Vec::new(),
+            Some(&body),
+        );
 
         module.add_function_export("f_internal", "f_external");
 
