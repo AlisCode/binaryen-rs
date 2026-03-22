@@ -1,6 +1,8 @@
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
 
-use binaryen_sys::bindings::{BinaryenAddFunction, BinaryenFunctionRef, BinaryenFunctionSetBody};
+use binaryen_sys::bindings::{
+    BinaryenAddFunction, BinaryenFunctionGetName, BinaryenFunctionRef, BinaryenFunctionSetBody,
+};
 
 use crate::{expression::Expression, module::Module, type_::Type};
 
@@ -43,6 +45,19 @@ impl Function {
         let func = self.as_inner();
         // SAFETY: we have exclusive access to the function
         unsafe { BinaryenFunctionSetBody(func, expr.as_inner()) }
+    }
+
+    // TODO: Reasses the safety of this.
+    // Maybe this should be fallible?
+    pub fn get_name(&self) -> &str {
+        let func = self.as_inner();
+
+        // SAFETY: we're returning a pointer as a CStr
+        let name = unsafe {
+            let name = BinaryenFunctionGetName(func);
+            CStr::from_ptr(name)
+        };
+        name.to_str().expect("Invalid")
     }
 
     pub(crate) fn as_inner(&self) -> BinaryenFunctionRef {
@@ -92,5 +107,17 @@ pub mod tests {
 
         let text = module.allocate_and_write_text();
         insta::assert_snapshot!(text);
+    }
+
+    #[test]
+    fn should_get_function_name() {
+        let mut module = Module::new();
+
+        let func = module.add_function("f", Type::none(), Type::none(), vec![], None);
+
+        assert!(module.validate());
+
+        let fname = func.get_name();
+        assert_eq!(fname, "f");
     }
 }
