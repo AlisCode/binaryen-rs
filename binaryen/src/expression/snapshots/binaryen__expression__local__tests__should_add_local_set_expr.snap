@@ -1,0 +1,13 @@
+---
+source: binaryen/src/expression/local.rs
+expression: text
+---
+(module
+ (type $0 (func))
+ (func $f
+  (local $0 i32)
+  (local.set $0
+   (i32.const 0)
+  )
+ )
+)

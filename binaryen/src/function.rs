@@ -6,8 +6,7 @@ use binaryen_sys::bindings::{
 
 use crate::{expression::Expression, module::Module, type_::Type};
 
-// TODO: Is this a mistake?
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct Function(BinaryenFunctionRef);
 
 impl Function {
