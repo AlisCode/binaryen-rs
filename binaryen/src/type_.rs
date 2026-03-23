@@ -1,7 +1,7 @@
 pub use binaryen_sys::bindings::BinaryenType;
 use binaryen_sys::bindings::{
-    BinaryenTypeArity, BinaryenTypeCreate, BinaryenTypeFuncref, BinaryenTypeInt32,
-    BinaryenTypeNone,
+    BinaryenTypeArity, BinaryenTypeAuto, BinaryenTypeCreate, BinaryenTypeFuncref,
+    BinaryenTypeInt32, BinaryenTypeNone,
 };
 
 #[derive(Clone, Copy)]
@@ -18,6 +18,10 @@ impl Type {
 
     pub fn funcref() -> Self {
         Type(unsafe { BinaryenTypeFuncref() })
+    }
+
+    pub fn auto() -> Self {
+        Type(unsafe { BinaryenTypeAuto() })
     }
 
     pub fn create(types: Vec<Type>) -> Self {
