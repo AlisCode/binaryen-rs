@@ -4,7 +4,7 @@ use binaryen_sys::bindings::{
     BinaryenTypeInt32, BinaryenTypeNone,
 };
 
-#[derive(Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Type(BinaryenType);
 
 impl Type {
@@ -39,6 +39,10 @@ impl Type {
 
     pub(crate) fn into_inner(self) -> BinaryenType {
         self.0
+    }
+
+    pub(crate) fn from_inner(ty: BinaryenType) -> Self {
+        Type(ty)
     }
 }
 

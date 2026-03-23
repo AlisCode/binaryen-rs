@@ -1,7 +1,8 @@
 use std::ffi::{CStr, CString};
 
 use binaryen_sys::bindings::{
-    BinaryenAddFunction, BinaryenFunctionGetName, BinaryenFunctionRef, BinaryenFunctionSetBody,
+    BinaryenAddFunction, BinaryenFunctionAddVar, BinaryenFunctionGetName, BinaryenFunctionGetVar,
+    BinaryenFunctionRef, BinaryenFunctionSetBody,
 };
 
 use crate::{expression::Expression, module::Module, type_::Type};
@@ -46,6 +47,24 @@ impl Function {
         let func = self.as_inner();
         // SAFETY: we have exclusive access to the function
         unsafe { BinaryenFunctionSetBody(func, expr.as_inner()) }
+    }
+
+    // TODO: Replace u32 -> LocalId
+    pub fn add_var(&mut self, ty: Type) -> u32 {
+        let func = self.as_inner();
+        let ty = ty.into_inner();
+
+        // SAFETY: We have exclusive access to the function
+        unsafe { BinaryenFunctionAddVar(func, ty) }
+    }
+
+    // TODO: Replace u32 -> LocalId
+    pub fn get_var(&self, idx: u32) -> Type {
+        let func = self.as_inner();
+
+        // SAFETY: We do not need exclusive access to the function
+        let raw_ty = unsafe { BinaryenFunctionGetVar(func, idx) };
+        Type::from_inner(raw_ty)
     }
 
     // TODO: Reasses the safety of this.
@@ -120,5 +139,26 @@ pub mod tests {
 
         let fname = func.get_name();
         assert_eq!(fname, "f");
+    }
+
+    #[test]
+    fn should_get_var_of_function() {
+        let module = Module::new();
+
+        let func =
+            module.add_function("f", Type::none(), Type::none(), vec![Type::funcref()], None);
+        let ty = func.get_var(0);
+        assert_eq!(ty, Type::funcref());
+    }
+
+    #[test]
+    fn should_add_var_to_function() {
+        let module = Module::new();
+
+        let mut func = module.add_function("f", Type::none(), Type::none(), vec![], None);
+        func.add_var(Type::i32());
+
+        let ty = func.get_var(0);
+        assert_eq!(ty, Type::i32());
     }
 }
